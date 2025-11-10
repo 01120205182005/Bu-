@@ -1,26 +1,25 @@
 <!doctype html>
-<html lang="pt">
+
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Partilhar localização</title>
+  <title>Share Your Location</title>
 </head>
-<body>
-  <h2>Partilhe a sua localização</h2>
-  <p>Clique no botão e permita que o navegador aceda à sua localização. Só será enviada se você aceitar.</p>
-  <button id="getLoc">Partilhar localização</button>
-  <pre id="status"></pre>
-
-<script>
+<body style="font-family: Arial, sans-serif; padding: 20px;">
+  <h2>Hello, this page was prepared for you by Dumbo</h2>
+  <p>Please click the button below and allow your browser to access your location. It will only be shared if you approve.</p>
+  <button id="getLoc" style="padding: 10px 20px; font-size: 16px;">Share my location</button>
+  <pre id="status" style="margin-top: 20px; white-space: pre-wrap;"></pre><script>
 const status = document.getElementById('status');
 
 document.getElementById('getLoc').addEventListener('click', () => {
   if (!navigator.geolocation) {
-    status.textContent = 'Geolocalização não suportada pelo navegador.';
+    status.textContent = 'Geolocation is not supported by your browser.';
     return;
   }
 
-  status.textContent = 'A pedir permissão...';
+  status.textContent = 'Requesting permission...';
 
   navigator.geolocation.getCurrentPosition(async (pos) => {
     const coords = {
@@ -30,31 +29,30 @@ document.getElementById('getLoc').addEventListener('click', () => {
       timestamp: pos.timestamp
     };
 
-    status.textContent = 'Local obtido: ' + JSON.stringify(coords, null, 2);
+    status.textContent = 'Location obtained:\n' + JSON.stringify(coords, null, 2);
 
-    // Enviar para o seu servidor/webhook (substitua pela sua URL HTTPS)
+    // Replace with your HTTPS endpoint
     try {
-      const resp = await fetch('https://seu-servidor.exemplo/webhook-localizacao', {
+      const resp = await fetch('https://your-server.example/location-webhook', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(coords)
       });
       if (resp.ok) {
-        status.textContent += '\nEnviado com sucesso ao servidor.';
+        status.textContent += '\nSuccessfully sent to the server.';
       } else {
-        status.textContent += '\nErro ao enviar ao servidor: ' + resp.status;
+        status.textContent += '\nError sending to the server: ' + resp.status;
       }
     } catch (err) {
-      status.textContent += '\nFalha na rede: ' + err;
+      status.textContent += '\nNetwork failure: ' + err;
     }
 
   }, (err) => {
-    status.textContent = 'Permissão negada ou erro: ' + err.message;
+    status.textContent = 'Permission denied or error: ' + err.message;
   }, {
     enableHighAccuracy: true,
     timeout: 15000
   });
 });
-</script>
-</body>
+</script></body>
 </html>
